@@ -19,15 +19,15 @@ public class AStarComparator implements Comparator<Node> {
 		if (f1 == f2) {
 			return 0;
 		}
-		
+
 		// Priorità più alta per chi ha f più basso.
-		if (f1 < f2) {
+		if (f1 > f2) {
 			// 1 = primo nodo ha priorità più alta.
 			return 1;
 		}
 		return -1;
 	}
-	
+
 	public int f(Node n) {
 		return g(n) + h(n);
 	}
@@ -40,6 +40,8 @@ public class AStarComparator implements Comparator<Node> {
 	 */
 	public int h(Node n) {
 		return Math.max(Math.abs(n.getX() - end.getX()), Math.abs(n.getY() - end.getY()));
+		// return (int) Math.sqrt(Math.pow((n.getX() - end.getX()), 2) +
+		// Math.pow((n.getY() - end.getY()), 2));
 	}
 
 	/**
@@ -49,7 +51,7 @@ public class AStarComparator implements Comparator<Node> {
 	 * @return
 	 */
 	public int g(Node n) {
-		return n.getG() + 1;
+		return -n.getG();
 	}
 
 }

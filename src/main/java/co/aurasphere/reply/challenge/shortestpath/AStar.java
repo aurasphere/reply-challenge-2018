@@ -28,25 +28,31 @@ public class AStar implements PathSolver {
 		// TODO: qui serve un limite per non andare in out of memory.
 		while (!openList.isEmpty()) {
 			Node q = openList.poll();
+			System.out.println(q.getX() + " " + q.getY());
 			
 			for (Node successor : q.getAdjacentNodes()) {
 				Node topOpenList = openList.peek();
 				Node topCloseList = closeList.peek();
+				successor.setG(q.getG() + 1);
+				
+				if (closeList.contains(successor)){
+					continue;
+				}
 				
 				// check fine raggiunta
-				if (end.equalsNode(successor)) {
+				if (end.equals(successor)) {
 					end.setPreviousNode(successor);
 					end.setG(successor.getG() + 1);
 					return end;
 				}
 				
 				// Se questo è il miglior candidato, lo aggiungo alla lista da esplorare.
-				int f = comp.f(successor);
-				int lowestOpenListF = topOpenList == null ? Integer.MAX_VALUE : comp.f(topOpenList);
-				int lowestCloseListF = topCloseList == null ? Integer.MAX_VALUE : comp.f(topCloseList);
-				if (f <= lowestOpenListF &&  f <= lowestCloseListF) {
+//				int g = comp.g(successor);
+//				int lowestOpenListG = topOpenList == null ? Integer.MAX_VALUE : comp.g(topOpenList);
+//				int lowestCloseListG = topCloseList == null ? Integer.MAX_VALUE : comp.g(topCloseList);
+//				if (g <= lowestOpenListG) {
 					openList.add(successor);
-				}
+//				}
 			
 			}
 			// Questo nodo è stato esplorato.
