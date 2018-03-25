@@ -1,14 +1,12 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>co.aurasphere.reply.challenge</groupId>
-  <artifactId>shortest-path</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
-  
-  <dependencies>
-   <dependency>
-    <groupId>es.usc.citius.hipster</groupId>
-    <artifactId>hipster-all</artifactId>
-    <version>1.0.1</version>
-  </dependency>
-  </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>co.aurasphere</groupId>
+	<artifactId>reply-challenge</artifactId>
+	<version>1.0.0</version>
+
+	<properties>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+	</properties>
 </project>
