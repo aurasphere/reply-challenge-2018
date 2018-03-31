@@ -98,47 +98,35 @@ public class Node extends Point {
 			// 7 8 9
 
 			// 1
-			if (x != -ProblemStatement.BOUND_CONSTRAINT
-					&& y != ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x - 1, y + 1)) {
+			if (isValid(x - 1, y + 1)) {
 				new Node(x - 1, y + 1, this);
 			}
 			// 2
-			if (y != ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x, y + 1)) {
+			if (isValid(x, y + 1)) {
 				new Node(x, y + 1, this);
 			}
 			// 3
-			if (x != ProblemStatement.BOUND_CONSTRAINT
-					&& y != ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x + 1, y + 1)) {
+			if (isValid(x + 1, y + 1)) {
 				new Node(x + 1, y + 1, this);
 			}
 			// 4
-			if (x != -ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x - 1, y)) {
+			if (isValid(x - 1, y)) {
 				new Node(x - 1, y, this);
 			}
 			// 6
-			if (x != ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x + 1, y)) {
+			if (isValid(x + 1, y)) {
 				new Node(x + 1, y, this);
 			}
 			// 7
-			if (x != -ProblemStatement.BOUND_CONSTRAINT
-					&& y != -ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x - 1, y - 1)) {
+			if (isValid(x - 1, y - 1)) {
 				new Node(x - 1, y - 1, this);
 			}
 			// 8
-			if (y != -ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x, y - 1)) {
+			if (isValid(x, y - 1)) {
 				new Node(x, y - 1, this);
 			}
 			// 9
-			if (x != ProblemStatement.BOUND_CONSTRAINT
-					&& y != -ProblemStatement.BOUND_CONSTRAINT
-					&& isNotObstacle(x + 1, y - 1)) {
+			if (isValid(x + 1, y - 1)) {
 				new Node(x + 1, y - 1, this);
 			}
 		}
@@ -146,7 +134,8 @@ public class Node extends Point {
 	}
 
 	/**
-	 * Checks that a pair of coordinates are not inside an obstacle.
+	 * Checks that a pair of coordinates are not inside an obstacle and within
+	 * the grid boundary.
 	 *
 	 * @param x
 	 *            the x of the point to check
@@ -154,12 +143,26 @@ public class Node extends Point {
 	 *            the y of the point to check
 	 * @return true if the point is not inside an obstacle, false otherwise
 	 */
-	private boolean isNotObstacle(int x, int y) {
+	public boolean isValid(int x, int y) {
+		// Checks that the point is within the boundary.
+		if (x < -ProblemStatement.BOUND_CONSTRAINT || x > ProblemStatement.BOUND_CONSTRAINT
+				|| y < -ProblemStatement.BOUND_CONSTRAINT || y > ProblemStatement.BOUND_CONSTRAINT) {
+			return false;
+		}
+
 		for (Obstacle t : ProblemStatement.obstacles) {
-			if (t.isPointInsideWithBaricentricCoords(x, y)) {
+			// Checks that the point is not within an obstacle.
+			if (t.isPointInside(x, y)) {
+				return false;
+			}
+			
+			// Checks that there's no obstacle obstructing the path.
+			if (t.isPathObstructed(this, new Point(x, y))){
 				return false;
 			}
 		}
+		
+		// This point is valid.
 		return true;
 	}
 

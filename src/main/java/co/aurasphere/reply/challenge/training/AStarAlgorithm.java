@@ -2,6 +2,7 @@ package co.aurasphere.reply.challenge.training;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -22,52 +23,20 @@ public class AStarAlgorithm implements Comparator<Node> {
 	private Node target;
 
 	/**
-	 * Epsilon value used for dynamic heuristic function's weight computation.
-	 */
-	private Double epsilon;
-
-	/**
-	 * Estimated max depth value used for dynamic heuristic function's weight
-	 * computation.
-	 */
-	private Integer estimatedMaxDepth;
-
-	/**
 	 * Static weight of the heuristic function.
 	 */
-	private Double staticWeight;
+	private double staticWeight = 10.0;
 
 	/**
-	 * Instantiates a new AStarAlgorithm with weight 1 for the heuristic
-	 * function.
+	 * If true, each visited node coordinates are logged.
 	 */
-	public AStarAlgorithm() {
-	}
+	private boolean debug = true;
 
 	/**
-	 * Instantiates a new AStarAlgorithm with weight the value passed as
-	 * argument for the heuristic function.
-	 *
-	 * @param staticWeight
-	 *            the {@link #staticWeight}
+	 * Max number of iteration the algorithm is allowed to perform before
+	 * returning a negative response.
 	 */
-	public AStarAlgorithm(double staticWeight) {
-		this.staticWeight = staticWeight;
-	}
-
-	/**
-	 * Instantiates a new AStarAlgorithm with dynamic weight computed with the
-	 * values passed as arguments for the heuristic function.
-	 *
-	 * @param epsilon
-	 *            the {@link #epsilon}
-	 * @param estimatedMaxDepth
-	 *            the {@link #estimatedMaxDepth}
-	 */
-	public AStarAlgorithm(double epsilon, int estimatedMaxDepth) {
-		this.epsilon = epsilon;
-		this.estimatedMaxDepth = estimatedMaxDepth;
-	}
+	private int maxNumberOfSteps = 170_000;
 
 	/**
 	 * Finds the shortest path from start to end. If a path has been found, the
@@ -76,12 +45,12 @@ public class AStarAlgorithm implements Comparator<Node> {
 	 * 
 	 * @param start
 	 *            the starting node
-	 * @param end
+	 * @param goal
 	 *            the ending node
 	 * @return the end node if a path has been found, null otherwise
 	 */
-	public Node calculateShortestPath(Node start, Node end) {
-		this.target = end;
+	public Node calculateShortestPath(Node start, Node goal) {
+		this.target = goal;
 
 		// Unexplored nodes.
 		Queue<Node> openList = new PriorityQueue<Node>(this);
@@ -92,13 +61,16 @@ public class AStarAlgorithm implements Comparator<Node> {
 		start.setG(0);
 		openList.offer(start);
 
-		// XXX: This may cause out of memory errors but this kind of error
-		// handling doesn't really fit the purpose of this project.
-		while (!openList.isEmpty()) {
+		int currentStep = 0;
+		while (!openList.isEmpty() && currentStep < maxNumberOfSteps) {
 			Node q = openList.poll();
-			System.out.println(q + " " + f(q) + " " + g(q));
 
-			for (Node successor : q.getAdjacentNodes()) {
+			// Logging.
+			if (debug) {
+				System.out.println(q);
+			}
+			// Main loop of the algorithm.
+			mainLoop: for (Node successor : q.getAdjacentNodes()) {
 
 				// If we already explored that node or we already added to the
 				// "to explore" list, we just skip it.
@@ -106,42 +78,41 @@ public class AStarAlgorithm implements Comparator<Node> {
 					continue;
 				}
 
-				// Stop if we reached the end.
-				if (successor.equals(end)) {
-					end.setParent(successor);
-					end.setG(successor.getG() + 1);
-					return end;
+				// Stop if we reached the goal.
+				if (successor.equals(goal)) {
+					return successor;
 				}
 
-				Node sameNode = getSameNode(openList, successor);
-				// Skip this node if we have a better one.
-				if (sameNode != null) {
-					if (successor.getG() >= sameNode.getG()) {
-						continue;
+				// If we have already found this node we will keep the best
+				// between the two.
+				if (openList.contains(successor)) {
+					Iterator<Node> iterator = openList.iterator();
+					while (iterator.hasNext()) {
+						Node oldNode = iterator.next();
+						if (oldNode.equals(successor)) {
+							// Skip this node if we have a better one.
+							if (g(successor) >= g(oldNode)) {
+								continue mainLoop;
+							}
+
+							// Otherwise, this is a better node let's remove the
+							// other one.
+							iterator.remove();
+						}
 					}
 
-					// Otherwise, this is a better node let's remove the other
-					// one.
-					openList.remove(sameNode);
 				}
 
+				// Add the node to the list to explore.
 				openList.offer(successor);
 
 			}
 			// This node has been fully explored.
 			closedList.add(q);
+			currentStep++;
 		}
 
 		// No path has been found.
-		return null;
-	}
-
-	private Node getSameNode(Queue<Node> openList, Node sameNode) {
-		for (Node node : openList) {
-			if (node.equals(sameNode)) {
-				return sameNode;
-			}
-		}
 		return null;
 	}
 
@@ -175,26 +146,8 @@ public class AStarAlgorithm implements Comparator<Node> {
 	 * @return the weight of the heuristic function for a node
 	 */
 	private double w(Node n) {
-		// Dynamic weight
-		if (epsilon != null && estimatedMaxDepth != null)
-			return 1 + epsilon - (epsilon * d(n) / estimatedMaxDepth);
 		// Static weight
-		if (staticWeight != null)
-			return staticWeight;
-		// No weight
-		return 1;
-	}
-
-	/**
-	 * Returns the depth of the current search.
-	 * 
-	 * @param n
-	 *            the node whose depth needs to be computed
-	 * @return the depth of the current search
-	 */
-	private int d(Node n) {
-		// We use g(n) as a depth estimator.
-		return g(n);
+		return staticWeight;
 	}
 
 	/**

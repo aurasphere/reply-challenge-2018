@@ -1,6 +1,9 @@
 package co.aurasphere.reply.challenge.training;
 
 import java.awt.Point;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -13,7 +16,18 @@ import co.aurasphere.reply.challenge.training.model.Node;
 import co.aurasphere.reply.challenge.training.model.Obstacle;
 import co.aurasphere.reply.challenge.training.model.ProblemStatement;
 
+/**
+ * Main solution class for the Reply code challenge 2018 training problem.
+ * 
+ * @author Donato Rimenti
+ *
+ */
 public class Solution {
+
+	/**
+	 * Solution and debugging output file.
+	 */
+	private static String OUTPUT_FILE;
 	
 	/**
 	 * The main method of this class. Reads an input file into a
@@ -26,23 +40,33 @@ public class Solution {
 	 */
 	public static void main(String[] args) throws Exception {
 		// Loads the problem statement.
-		parseFile("input_1.txt");
+		parseFile("input_4.txt");
+
+		// Redirects the system output to a file if present.
+		if (OUTPUT_FILE != null) {
+			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(OUTPUT_FILE)), true,
+					StandardCharsets.UTF_8.name()));
+		}
 
 		// Solves the problem.
 		AStarAlgorithm solver = new AStarAlgorithm();
-		Node target = solver.calculateShortestPath(
-				ProblemStatement.startingPoint, ProblemStatement.endingPoint);
+		Node target = solver.calculateShortestPath(ProblemStatement.startingPoint, ProblemStatement.endingPoint);
+
+		// Clears the output from debugging results before printing the actual
+		// solution.
+		if (OUTPUT_FILE != null) {
+			System.setOut(new PrintStream(new BufferedOutputStream(new FileOutputStream(OUTPUT_FILE)), true,
+					StandardCharsets.UTF_8.name()));
+		}
 
 		// Prints the solution.
-
-		// Redirects the system output to a file.
-		// System.setOut(new PrintStream(new BufferedOutputStream(new
-		// FileOutputStream("C:\\Users\\Donato\\Desktop\\out_path_1.txt")),
-		// true));
 		if (target == null) {
-			System.out.println("IMPOSSIBLE");
+			// In this case the score is 0.
+			System.out.print("IMPOSSIBLE");
 		} else {
-			printSolution(target);
+			// In this case the score is 1 / numberOfNodes * 1_000_000 if the
+			// solution is correct.
+			printSolution(target, 0);
 		}
 	}
 
@@ -51,12 +75,22 @@ public class Solution {
 	 * 
 	 * @param node
 	 *            the node to traverse back
+	 * @param nodeCounter
+	 *            used to print the number of nodes
+	 * @return the number of nodes
 	 */
-	private static void printSolution(Node node) {
+	private static int printSolution(Node node, int nodeCounter) {
 		if (node.getParent() != null) {
-			printSolution(node.getParent());
+			printSolution(node.getParent(), ++nodeCounter);
+			System.out.println();
+		} else {
+			// Prints the first line (the number of nodes).
+			System.out.println(nodeCounter);
 		}
-		System.out.println(node);
+		System.out.print(node);
+
+		// Returns the number of nodes.
+		return nodeCounter;
 	}
 
 	/**
@@ -69,10 +103,8 @@ public class Solution {
 	 */
 	public static void parseFile(String fileName) throws Exception {
 		// Reads all the file lines.
-		URI filePath = Solution.class.getClassLoader().getResource(fileName)
-				.toURI();
-		List<String> fileLines = Files.readAllLines(Paths.get(filePath),
-				StandardCharsets.UTF_8);
+		URI filePath = Solution.class.getClassLoader().getResource(fileName).toURI();
+		List<String> fileLines = Files.readAllLines(Paths.get(filePath), StandardCharsets.UTF_8);
 
 		// Processes each line.
 		Iterator<String> it = fileLines.iterator();
@@ -113,8 +145,7 @@ public class Solution {
 		List<Point> points = new ArrayList<Point>(60000);
 		// Step by 2 since each iteration makes a point out of 2 array elements.
 		for (int i = 0; i < coords.length; i += 2) {
-			points.add(new Point(Integer.parseInt(coords[i]), Integer
-					.parseInt(coords[i + 1])));
+			points.add(new Point(Integer.parseInt(coords[i]), Integer.parseInt(coords[i + 1])));
 		}
 		return points;
 	}
