@@ -61,8 +61,7 @@ It usually requires a graph to run Dijkstra but I couldn't afford to build the w
 
 Here's a visual representation of Dijkstra's method:
 
-<p align="center"><img alt="Dijkstra 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/dijkstra_1.png"></p>
-<p align="center"><img alt="Dijkstra 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/dijkstra_2.png"></p>
+<p align="center"><img alt="Dijkstra 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/dijkstra_1.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="Dijkstra 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/dijkstra_2.png" width="300px" height="300px" align="middle"></p>
 
 ### Nodes Validations
 
@@ -204,11 +203,9 @@ The whole A* algorithm was the following:
 
 Here's a visual representation of how the A* algorithm moved towards the goal:
 
-<p align="center"><img alt="A* 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_1.png"></p>
-<p align="center"><img alt="A* 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_2.png"></p>
-<p align="center"><img alt="A* 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_3.png"></p>
-<p align="center"><img alt="A* 4" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_4.png"></p>
-<p align="center"><img alt="A* 5" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_5.png"></p>
+<p align="center"><img alt="A* 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_1.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="A* 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_2.png" width="300px" height="300px" align="middle"></p>
+<p align="center"><img alt="A* 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_3.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="A* 4" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_4.png" width="300px" height="300px" align="middle"></p>
+<p align="center"><img alt="A* 5" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/astar_5.png" width="300px" height="300px" align="middle"></p>
 
 ### Bounded Relaxation
 
@@ -222,9 +219,8 @@ With this in mind, I've added the concept of [bounded relaxation](https://en.wik
 
 Here's a depiction of the improved algorithm with a weight value of 10.0. The last picture shows how a path would be traced when a solution would have been found to highlight the performed tradeoff (in this dataset the final node is actually obstructed so that is not a correct solution):
 
-<p align="center"><img alt="A* with bounded relaxation 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_1.png"></p>
-<p align="center"><img alt="A* with bounded relaxation 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_2.png"></p>
-<p align="center"><img alt="A* with bounded relaxation 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_final.png"></p>
+<p align="center"><img alt="A* with bounded relaxation 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_1.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="A* with bounded relaxation 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_2.png" width="300px" height="300px" align="middle"></p>
+<p align="center"><img alt="A* with bounded relaxation 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/bounded_relaxation_10_final.png" width="300px" height="300px" align="middle"></p>
 
 ### Limitations
 
@@ -234,5 +230,4 @@ Of course, there are plenty of better and cleaner solutions like running the alg
 
 To give a little more insight, here is a visual representation of both the problem I wanted to avoid and the algorithm dealing with it by going on exploring until the threshold is reached after 170.000 nodes explored:
 
-<p align="center"><img alt="Obstructed node" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node.jpg"></p>
-<p align="center"><img alt="Obstructed node stalemate" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node_stalemate.png"></p>
+<p align="center"><img alt="Obstructed node" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node.jpg" width="300px" height="300px" align="middle"> <img alt="Obstructed node stalemate" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node_stalemate.png" width="300px" height="300px" align="middle"></p>
