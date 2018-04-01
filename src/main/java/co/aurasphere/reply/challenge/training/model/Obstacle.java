@@ -31,12 +31,12 @@ public class Obstacle {
 	 * First segment of the obstacle.
 	 */
 	private Line2D firstSegment;
-	
+
 	/**
 	 * Second segment of the obstacle.
 	 */
 	private Line2D secondSegment;
-	
+
 	/**
 	 * Third segment of the obstacle.
 	 */
@@ -76,8 +76,9 @@ public class Obstacle {
 		long s = a.y * c.x - a.x * c.y + (c.y - a.y) * x + (a.x - c.x) * y;
 		long t = a.x * b.y - a.y * b.x + (a.y - b.y) * x + (b.x - a.x) * y;
 
-		if ((s < 0) != (t < 0))
+		if ((s < 0) != (t < 0)) {
 			return false;
+		}
 
 		long A = -b.y * c.x + a.y * (c.x - b.x) + a.x * (b.y - c.y) + b.x * c.y;
 		if (A < 0.0) {

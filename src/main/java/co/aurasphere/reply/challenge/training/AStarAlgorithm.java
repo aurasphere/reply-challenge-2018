@@ -159,8 +159,8 @@ public class AStarAlgorithm implements Comparator<Node> {
 	 * @return the estimated cost to reach the end from the node n
 	 */
 	private int h(Node n) {
-		// We use diagonal distance as our heuristic since we can move in 8
-		// different directions.
+		// We use Chebyshev distance (or diagonal distance) as our heuristic
+		// since we can move in 8 different directions.
 		return Math.max(Math.abs(n.x - target.x), Math.abs(n.y - target.y));
 	}
 
