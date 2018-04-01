@@ -10,7 +10,7 @@ The problem statement required to find the shortest path from point A to point B
 
 ### Dijkstra
 
-It usually requires a graph to run Dijkstra but I couldn't afford to build the whole grid because of its huge size, hence, I've used a discovery method that, at each iteration, would lazily compute and add the valid neightbours nodes of the current one to the "to visit" list:
+It usually requires a graph to run Dijkstra but I couldn't afford to build the whole grid because of its huge size, hence, I've used a discovery method that, at each iteration, would lazily compute and add the valid neighbour nodes of the current one to the "to visit" list:
 
     public List<Node> getAdjacentNodes() {
         if (adjacentNodes == null) {
@@ -65,7 +65,7 @@ Here's a visual representation of Dijkstra's method:
 
 ### Nodes Validations
 
-To be valid, a node needed not to be within an obstacle, a 3-tuple of points which defines a triangle, and inside the grid boundary of 10<sup>-6</sup> and 10<sup>6</sup> on both axis. Certainly the latter validation was trivial to implement but the former was not that difficult either when considering that I was working with triangles and taking advantage of the [baricentric coordinates](https://stackoverflow.com/a/2049712/4921205):
+To be valid, a node needed not to be within an obstacle, a 3-tuple of points which defines a triangle, and inside the grid boundary of 10<sup>-6</sup> and 10<sup>6</sup> on both axis. Certainly, the latter validation was trivial to implement but the former was not that difficult either when considering that I was working with triangles and taking advantage of the [baricentric coordinates](https://stackoverflow.com/a/2049712/4921205):
 
     public boolean isPointInside(long x, long y) {
         long s = a.y * c.x - a.x * c.y + (c.y - a.y) * x + (a.x - c.x) * y;
@@ -84,7 +84,7 @@ To be valid, a node needed not to be within an obstacle, a 3-tuple of points whi
         return s > 0 && t > 0 && (s + t) <= A;
     }
 
-Later on, I've also added a new validation to check whether a path between nodes would cross an obstacle. This could have happened in case they were neightbours even if none of them were inside the obstacles themself like in the following example. It was easy to fix this using the Java 2D API and intersections. Here's the code and two examples showing after and before the check:
+Later on, I've also added a new validation to check whether a path between nodes would cross an obstacle. This could have happened in case they were neighbours even if none of them was inside the obstacles themselves like in the following example. It was easy to fix this using the Java 2D API and intersections. Here are the code and two examples showing after and before the check:
 
     public boolean isPathObstructed(Point origin, Point destination) {
         Line2D pathToCheck = new Line2D.Float(origin, destination);
@@ -95,7 +95,7 @@ Later on, I've also added a new validation to check whether a path between nodes
 
 <p align="center"><img alt="Before" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/illegal_crossing_1.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="After" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/illegal_crossing_2.png" width="300px" height="300px" align="middle"></p>
 
-All of this checks were performed by iterating all the obstacles each time we needed to explore a node. Altought I didn't think that would work both due to performance and memory limitations, I resisted the urge to perform any premature optimization and I gave it a shot instead. It actually worked, to my surprise, and it was fast enough so I never really looked into a way to improve this:
+All of this checks were performed by iterating all the obstacles each time we needed to explore a node. Although I didn't think that would work both due to performance and memory limitations, I resisted the urge to perform any premature optimization and I gave it a shot instead. It actually worked, to my surprise, and it was fast enough so I never really looked into a way to improve this:
 
     public boolean isValid(int x, int y) {
         // Checks that the point is within the boundary.
@@ -124,7 +124,7 @@ All of this checks were performed by iterating all the obstacles each time we ne
 
 Unluckily, Dijkstra method quickly proved to be too slow even for the smallest input dataset, therefore I switched over to a plain implementation of the [A* algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm). 
 
-The new solution was basically an improved version of the first one: Dijkstra's fitness function only took into account the node cost *g()* but A* also used an heuristic function *h()* to select only the nodes that moved towards the goal. The heuristic function used was the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance) formula because it allows movement in 8 directions:
+The new solution was basically an improved version of the first one: Dijkstra's fitness function only took into account the node cost *g()* but A* also used a heuristic function *h()* to select only the nodes that moved towards the goal. The heuristic function used was the [Chebyshev distance](https://en.wikipedia.org/wiki/Chebyshev_distance) formula because it allows movement in 8 directions:
 
     private int h(Node n) {
         return Math.max(Math.abs(n.x - target.x), Math.abs(n.y - target.y));
@@ -207,7 +207,7 @@ Here's a visual representation of how the A* algorithm moved towards the goal:
 
 ### Bounded Relaxation
 
-Although the A* proved to be much quicker and efficient than Dijkstra, it still took a very long time to find the best path between the two nodes and I was still testing with the smallest dataset. At this point, I just decided than finding a solution would have been better than trying to find the best solution and this ultimately led me to accept a tradeoff between optimality and performances.
+Although the A* proved to be much quicker and efficient than Dijkstra, it still took a very long time to find the best path between the two nodes and I was still testing with the smallest dataset. At this point, I just decided that finding a solution would have been better than trying to find the best solution and this ultimately led me to accept a tradeoff between optimality and performances.
 
 With this in mind, I've added the concept of [bounded relaxation](https://en.wikipedia.org/wiki/Relaxation_(approximation)) inside the algorithm by adding a static weight *w()* to the heuristic *h()* when computing the fitness function *f()*:
 
@@ -222,7 +222,7 @@ Here's a depiction of the improved algorithm with a weight value of 10.0. The la
 
 ### Limitations
 
-When working with the first dataset, I've stumbled upon the situation in which the goal node was obstructed. The way I coped with that was by limiting the maximum number of nodes that could be visited. Altough this prevented the algorithm to go on forever if the goal was unreacheable, it also meant that the algorithm would yield a negative result for a feasible path that required to explore more nodes than this threshold.
+When working with the first dataset, I've stumbled upon the situation in which the goal node was obstructed. The way I coped with that was by limiting the maximum number of nodes that could be visited. Although this prevented the algorithm to go on forever if the goal was unreachable, it also meant that the algorithm would yield a negative result for a feasible path that required to explore more nodes than this threshold.
 
 Of course, there are plenty of better and cleaner solutions like running the algorithm in a different thread with a timeout or checking this limit relative to a node, but this was the cheapest to implement so I just went for it. 
 
@@ -244,16 +244,16 @@ The scoring method is the following:
 
 Ordered by dataset input:
 
- - *0 points* : the final node is unreacheable, so the result is IMPOSSIBLE
+ - *0 points*: the final node is unreachable, so the result is IMPOSSIBLE
     <p align="center"><img alt="Solution 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_1_solution.png" width="300px" height="300px" align="middle"> 
  
- - *0 points* : both nodes are within an obstacle, therefore the result is again IMPOSSIBLE
+ - *0 points*: both nodes are within an obstacle, therefore the result is again IMPOSSIBLE
     <p align="center"><img alt="Solution 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_2_solution.png" width="300px" height="300px" align="middle"> 
  
- - *161,89 points* : the path found is 6.177 nodes long
+ - *161,89 points*: the path found is 6.177 nodes long
     <p align="center"><img alt="Solution 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_3_solution.png" width="300px" height="300px" align="middle"> 
  
- - *0 points* : here, the path found is 15.668 nodes long but since the maximum allowed path is 10.000 nodes long, I've just printed out IMPOSSIBLE to avoid the -100 points penalty
+ - *0 points*: here, the path found is 15.668 nodes long but since the maximum allowed path is 10.000 nodes long, I've just printed out IMPOSSIBLE to avoid the -100 points penalty
     <p align="center"><img alt="Solution 4" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_4_solution.png" width="300px" height="300px" align="middle"> 
  
 ### Total Score
@@ -266,14 +266,14 @@ This project was really fun and interesting. I've surely learned a lot on pathfi
 
 My solution is not the best for sure and can be further improved. In particular, the last dataset shows the limitation of a bounded relaxation approach since it's clear that there is a better path to the node but we prefer going faster (and it still takes around 30 minutes) than being accurate. A more efficient approach would probably be the [Jump Point algorithm](https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf), which I may study in the future if I get any spare time.
 
-## Aknowledgements
+## Acknowledgements
 
 Special thanks to @enricoaleandri for building the visualizer used to show the paths.
 
 ## Discussions
 
-If you want to say something feel free to open an issue on this project. I don't guarantee I'll make any fixes on this project but I'll read and reply for sure.
+If you want to say something, feel free to open an issue on this project. I don't guarantee I'll make any fixes on this project but I'll read and reply for sure.
 
-If instead you want to contact me directly, just send me an email.
+If instead you want to get in touch directly, just send me an email.
 
 <sub>Copyright (c) 2018 Donato Rimenti</sub>
