@@ -2,7 +2,7 @@
 
 This repository contains both the problem statement and my solution to the Reply Code Challenge training problem. The solution is written in Java.
 
-**Note:** since the method which prints the final solution uses recursion to print the visited nodes by traversing back the last one, you may get a StackOverflowError. To avoid that, add the <code>-Xss515m</code> argument when starting your JVM. 
+**Note:** since the method which prints the final solution uses recursion to print the visited nodes by traversing back the last one, you may get a StackOverflowError. To avoid that, you should increase your stack size using the <code>-Xss</code> argument when starting the JVM. I've run this code with <code>-Xss515m</code> and it worked fine.
 
 ## Log
 
@@ -84,11 +84,7 @@ To be valid, a node needed not to be within an obstacle, a 3-tuple of points whi
         return s > 0 && t > 0 && (s + t) <= A;
     }
 
-Later on, I've also added a new validation to check whether a path between nodes would cross an obstacle. This could have happened in case they were neightbours even if none of them were inside the obstacles themself like in the following example:
-
-<p align="center"><img alt="Nodes crossing obstacle illegally" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/nodes_crossing_obstacle.jpg"></p>
-
-How naive of me was to forgot such a check! Here's the code that does that by using the Java 2D API and intersections:
+Later on, I've also added a new validation to check whether a path between nodes would cross an obstacle. This could have happened in case they were neightbours even if none of them were inside the obstacles themself like in the following example. It was easy to fix this using the Java 2D API and intersections. Here's the code and two examples showing after and before the check:
 
     public boolean isPathObstructed(Point origin, Point destination) {
         Line2D pathToCheck = new Line2D.Float(origin, destination);
@@ -96,7 +92,9 @@ How naive of me was to forgot such a check! Here's the code that does that by us
         return firstSegment.intersectsLine(pathToCheck) || secondSegment.intersectsLine(pathToCheck)
                 || thirdSegment.intersectsLine(pathToCheck);
     }
-    
+
+<p align="center"><img alt="Before" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/illegal_crossing_1.png" width="300px" height="300px" align="middle">&nbsp;&nbsp;&nbsp;->&nbsp;&nbsp;&nbsp;<img alt="After" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/illegal_crossing_2.png" width="300px" height="300px" align="middle"></p>
+
 All of this checks were performed by iterating all the obstacles each time we needed to explore a node. Altought I didn't think that would work both due to performance and memory limitations, I resisted the urge to perform any premature optimization and I gave it a shot instead. It actually worked, to my surprise, and it was fast enough so I never really looked into a way to improve this:
 
     public boolean isValid(int x, int y) {
@@ -231,3 +229,51 @@ Of course, there are plenty of better and cleaner solutions like running the alg
 To give a little more insight, here is a visual representation of both the problem I wanted to avoid and the algorithm dealing with it by going on exploring until the threshold is reached after 170.000 nodes explored:
 
 <p align="center"><img alt="Obstructed node" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node.jpg" width="300px" height="300px" align="middle"> <img alt="Obstructed node stalemate" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/obstructed_node_stalemate.png" width="300px" height="300px" align="middle"></p>
+
+## Scoring
+
+### Formula
+
+The scoring method is the following:
+
+ - if the solution is IMPOSSIBLE, the score is 0.
+ - if the solution is not correct or incomplete, the score is -100
+ - otherwise the solution is equal to 1 / (total_path_length) * 1.000.000
+ 
+### Partial Scores
+
+Ordered by dataset input:
+
+ - *0 points* : the final node is unreacheable, so the result is IMPOSSIBLE
+    <p align="center"><img alt="Solution 1" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_1_solution.png" width="300px" height="300px" align="middle"> 
+ 
+ - *0 points* : both nodes are within an obstacle, therefore the result is again IMPOSSIBLE
+    <p align="center"><img alt="Solution 2" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_2_solution.png" width="300px" height="300px" align="middle"> 
+ 
+ - *161,89 points* : the path found is 6.177 nodes long
+    <p align="center"><img alt="Solution 3" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_3_solution.png" width="300px" height="300px" align="middle"> 
+ 
+ - *0 points* : here, the path found is 15.668 nodes long but since the maximum allowed path is 10.000 nodes long, I've just printed out IMPOSSIBLE to avoid the -100 points penalty
+    <p align="center"><img alt="Solution 4" src="https://github.com/aurasphere/reply-challenge/raw/master/screenshots/input_4_solution.png" width="300px" height="300px" align="middle"> 
+ 
+### Total Score
+
+*161,89 points*
+ 
+## Final Considerations
+
+This project was really fun and interesting. I've surely learned a lot on pathfinding by working on it.
+
+My solution is not the best for sure and can be further improved. In particular, the last dataset shows the limitation of a bounded relaxation approach since it's clear that there is a better path to the node but we prefer going faster (and it still takes around 30 minutes) than being accurate. A more efficient approach would probably be the [Jump Point algorithm](https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf), which I may study in the future if I get any spare time.
+
+## Aknowledgements
+
+Special thanks to @enricoaleandri for building the visualizer used to show the paths.
+
+## Discussions
+
+If you want to say something feel free to open an issue on this project. I don't guarantee I'll make any fixes on this project but I'll read and reply for sure.
+
+If instead you want to contact me directly, just send me an email.
+
+<sub>Copyright (c) 2018 Donato Rimenti</sub>
