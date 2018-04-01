@@ -238,7 +238,7 @@ The scoring method is the following:
 
  - if the solution is IMPOSSIBLE, the score is 0.
  - if the solution is not correct or incomplete, the score is -100
- - otherwise the solution is equal to 1 / (total_path_length) * 1.000.000
+ - otherwise the score is 1 / (total_path_length) * 1.000.000
  
 ### Partial Scores
 
