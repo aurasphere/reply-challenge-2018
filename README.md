@@ -4,6 +4,8 @@ This repository contains both the problem statement and my solution to the Reply
 
 <s> **Note:** since the method which prints the final solution uses recursion to print the visited nodes by traversing back the last one, you may get a StackOverflowError. To avoid that, you should increase your stack size using the <code>-Xss</code> argument when starting the JVM. I've run this code with <code>-Xss515m</code> and it worked fine.</s>
 
+**Note:** this program is memory intensive, so start it up with a large amount of heap using the <code>-Xmx</code> argument. I've run this code with <code>-Xmx10g</code> and it worked fine.
+
 ## Log
 
 The problem statement required to find the shortest path from point A to point B, so I've started looking into pathfinding algorithms, in particular [Dijkstra's algorithm](https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm) since it was the only one I knew at the time.
