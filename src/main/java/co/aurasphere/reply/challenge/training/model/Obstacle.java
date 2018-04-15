@@ -121,8 +121,8 @@ public class Obstacle {
 	 *            the second point of the path
 	 * @return true if the path is obstructed by this obstacle, false otherwise
 	 */
-	public boolean isPathObstructed(Point origin, Point destination) {
-		Line2D pathToCheck = new Line2D.Float(origin, destination);
+	public boolean isPathObstructed(Node origin, Node destination) {
+		Line2D pathToCheck = new Line2D.Float(new Point(origin.x, origin.y), new Point(destination.x, destination.y));
 
 		return firstSegment.intersectsLine(pathToCheck) || secondSegment.intersectsLine(pathToCheck)
 				|| thirdSegment.intersectsLine(pathToCheck);

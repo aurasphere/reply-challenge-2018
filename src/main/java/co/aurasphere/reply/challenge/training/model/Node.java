@@ -27,6 +27,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import co.aurasphere.reply.challenge.training.AStarAlgorithm;
+
 /**
  * Single node used by this algorithm. The whole data structure is made up by a
  * node element with no {@link #parent} (the root) connected with others through
@@ -50,7 +52,7 @@ public class Node extends Point {
 	 * G score of this node, which represents the cost from the starting node to
 	 * this one.
 	 */
-	private int g;
+	private double g;
 
 	/**
 	 * The nodes reachable from this one. To avoid out of memory errors, they
@@ -61,28 +63,29 @@ public class Node extends Point {
 	/**
 	 * Instantiates a new Node.
 	 *
-	 * @param point
-	 *            the coordinates of this node
+	 * @param x
+	 *            {@link Point#x}
+	 * @param y
+	 *            {@link Point#y}
 	 */
-	public Node(Point point) {
-		super(point);
+	public Node(int x, int y) {
+		super(x, y);
 	}
 
 	/**
 	 * Instantiates a new Node.
 	 *
 	 * @param x
-	 *            the x
+	 *            {@link Point#x}
 	 * @param y
-	 *            the y
+	 *            {@link Point#y}
 	 * @param parent
 	 *            the {@link #parent}
 	 */
 	public Node(int x, int y, Node parent) {
 		super(x, y);
-		this.g = parent.g + 1;
+		this.g = parent.g + (parent.x != x && parent.y != y ? AStarAlgorithm.DIAGONAL_COST : 1);
 		this.parent = parent;
-		parent.adjacentNodes.add(this);
 	}
 
 	/**
@@ -90,7 +93,7 @@ public class Node extends Point {
 	 *
 	 * @return the {@link #g}
 	 */
-	public int getG() {
+	public double getG() {
 		return g;
 	}
 
@@ -100,7 +103,7 @@ public class Node extends Point {
 	 * @param g
 	 *            the new {@link #g}
 	 */
-	public void setG(int g) {
+	public void setG(double g) {
 		this.g = g;
 	}
 
@@ -121,37 +124,21 @@ public class Node extends Point {
 			// 7 8 9
 
 			// 1
-			if (isValid(x - 1, y + 1)) {
-				new Node(x - 1, y + 1, this);
-			}
+			addIfValid(new Node(x - 1, y + 1, this));
 			// 2
-			if (isValid(x, y + 1)) {
-				new Node(x, y + 1, this);
-			}
+			addIfValid(new Node(x, y + 1, this));
 			// 3
-			if (isValid(x + 1, y + 1)) {
-				new Node(x + 1, y + 1, this);
-			}
+			addIfValid(new Node(x + 1, y + 1, this));
 			// 4
-			if (isValid(x - 1, y)) {
-				new Node(x - 1, y, this);
-			}
+			addIfValid(new Node(x - 1, y, this));
 			// 6
-			if (isValid(x + 1, y)) {
-				new Node(x + 1, y, this);
-			}
+			addIfValid(new Node(x + 1, y, this));
 			// 7
-			if (isValid(x - 1, y - 1)) {
-				new Node(x - 1, y - 1, this);
-			}
+			addIfValid(new Node(x - 1, y - 1, this));
 			// 8
-			if (isValid(x, y - 1)) {
-				new Node(x, y - 1, this);
-			}
+			addIfValid(new Node(x, y - 1, this));
 			// 9
-			if (isValid(x + 1, y - 1)) {
-				new Node(x + 1, y - 1, this);
-			}
+			addIfValid(new Node(x + 1, y - 1, this));
 		}
 		return adjacentNodes;
 	}
@@ -166,26 +153,20 @@ public class Node extends Point {
 	 *            the y of the point to check
 	 * @return true if the point is not inside an obstacle, false otherwise
 	 */
-	public boolean isValid(int x, int y) {
-		// Checks that the point is within the boundary.
-		if (x < -ProblemStatement.BOUND_CONSTRAINT || x > ProblemStatement.BOUND_CONSTRAINT
-				|| y < -ProblemStatement.BOUND_CONSTRAINT || y > ProblemStatement.BOUND_CONSTRAINT) {
+	public boolean addIfValid(Node n) {
+		// Checks that there's no obstacle obstructing the path.
+		if (ProblemStatement.obstaclePoints.contains(n)) {
 			return false;
 		}
 
-		for (Obstacle t : ProblemStatement.obstacles) {
-			// Checks that the point is not within an obstacle.
-			if (t.isPointInside(x, y)) {
-				return false;
-			}
-			
-			// Checks that there's no obstacle obstructing the path.
-			if (t.isPathObstructed(this, new Point(x, y))){
-				return false;
-			}
+		// Checks that the point is within the boundary.
+		if (n.x < -ProblemStatement.BOUND_CONSTRAINT || n.x > ProblemStatement.BOUND_CONSTRAINT
+				|| n.y < -ProblemStatement.BOUND_CONSTRAINT || n.y > ProblemStatement.BOUND_CONSTRAINT) {
+			return false;
 		}
-		
+
 		// This point is valid.
+		adjacentNodes.add(n);
 		return true;
 	}
 

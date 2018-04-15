@@ -23,7 +23,10 @@
  */
 package co.aurasphere.reply.challenge.training.model;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Contains the problem data. For simplicity, all fields are declared public and
@@ -34,9 +37,10 @@ import java.util.List;
 public class ProblemStatement {
 
 	/**
-	 * Represents the maximum/minimum (with inverted sign) value for the coordinates of a node.
+	 * Represents the maximum/minimum (with inverted sign) value for the
+	 * coordinates of a node.
 	 */
-	public final static int BOUND_CONSTRAINT = 1000000;
+	public static final int BOUND_CONSTRAINT = 1000000;
 
 	/**
 	 * The starting node.
@@ -54,8 +58,13 @@ public class ProblemStatement {
 	public static int numberOfObstacles;
 
 	/**
+	 * Contains all the obstacle perimetrical points.
+	 */
+	public static final Set<Node> obstaclePoints = new HashSet<Node>();
+
+	/**
 	 * The list of obstacles in the grid.
 	 */
-	public static List<Obstacle> obstacles;
+	public static final List<Obstacle> obstacles = new ArrayList<Obstacle>();
 
 }

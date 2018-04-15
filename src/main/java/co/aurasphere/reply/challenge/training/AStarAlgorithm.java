@@ -23,12 +23,12 @@
  */
 package co.aurasphere.reply.challenge.training;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.PriorityQueue;
 import java.util.Queue;
+import java.util.Set;
 
 import co.aurasphere.reply.challenge.training.model.Node;
 
@@ -38,7 +38,12 @@ import co.aurasphere.reply.challenge.training.model.Node;
  * @author Donato Rimenti
  *
  */
-public class AStarAlgorithm implements Comparator<Node> {
+public class AStarAlgorithm {
+
+	/**
+	 * Cost of a diagonal step.
+	 */
+	public final static double DIAGONAL_COST = Math.sqrt(2);
 
 	/**
 	 * Final destination to reach with this algorithm.
@@ -48,18 +53,7 @@ public class AStarAlgorithm implements Comparator<Node> {
 	/**
 	 * Static weight of the heuristic function.
 	 */
-	private double staticWeight = 10.0;
-
-	/**
-	 * If true, each visited node coordinates are logged.
-	 */
-	private boolean debug = true;
-
-	/**
-	 * Max number of iteration the algorithm is allowed to perform before
-	 * returning a negative response.
-	 */
-	private int maxNumberOfSteps = 170_000;
+	private double staticWeight = 1.5;
 
 	/**
 	 * Finds the shortest path from start to end. If a path has been found, the
@@ -76,24 +70,23 @@ public class AStarAlgorithm implements Comparator<Node> {
 		this.target = goal;
 
 		// Unexplored nodes.
-		Queue<Node> openList = new PriorityQueue<Node>(this);
+		Queue<Node> openList = new PriorityQueue<Node>((n1, n2) -> Double.compare(f(n1), f(n2)));
+		Map<Node, Node> openMap = new HashMap<Node, Node>();
 		// Explored nodes.
-		List<Node> closedList = new ArrayList<Node>();
+		Set<Node> closedList = new HashSet<Node>();
 
 		// Initializes the first node by forcing g to 0.
 		start.setG(0);
 		openList.offer(start);
 
-		int currentStep = 0;
-		while (!openList.isEmpty() && currentStep < maxNumberOfSteps) {
+		while (!openList.isEmpty()) {
 			Node q = openList.poll();
 
-			// Logging.
-			if (debug) {
-				System.out.println(q);
-			}
+			// Uncomment to enable logging.
+			// System.out.println(q);
+
 			// Main loop of the algorithm.
-			mainLoop: for (Node successor : q.getAdjacentNodes()) {
+			for (Node successor : q.getAdjacentNodes()) {
 
 				// If we already explored that node or we already added to the
 				// "to explore" list, we just skip it.
@@ -106,47 +99,52 @@ public class AStarAlgorithm implements Comparator<Node> {
 					return successor;
 				}
 
-				// If we have already found this node we will keep the best
-				// between the two.
-				if (openList.contains(successor)) {
-					Iterator<Node> iterator = openList.iterator();
-					while (iterator.hasNext()) {
-						Node oldNode = iterator.next();
-						if (oldNode.equals(successor)) {
-							// Skip this node if we have a better one.
-							if (g(successor) >= g(oldNode)) {
-								continue mainLoop;
-							}
-
-							// Otherwise, this is a better node let's remove the
-							// other one.
-							iterator.remove();
-						}
-					}
-
+				// Add the node to the list to explore if not already there.
+				Node oldSuccessor = openMap.get(successor);
+				if (oldSuccessor == null) {
+					openList.offer(successor);
+					openMap.put(successor, successor);
+					continue;
 				}
 
-				// Add the node to the list to explore.
-				openList.offer(successor);
+				// The distance from start to a neighbor.
+				double tentativeGScore = g(q) + distanceBetween(q, successor);
 
+				// This is not a better path.
+				if (tentativeGScore >= g(oldSuccessor)) {
+					continue;
+				}
+
+				// This path is the best until now.
+				oldSuccessor.setParent(q);
+				oldSuccessor.setG(tentativeGScore);
+				openList.remove(oldSuccessor);
+				openList.add(oldSuccessor);
 			}
+
 			// This node has been fully explored.
 			closedList.add(q);
-			currentStep++;
 		}
 
 		// No path has been found.
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
+	/**
+	 * Returns the distance between two nodes. The distance is defined ad
+	 * {@link #DIAGONAL_COST} if the move is diagonal or 1 otherwise.
 	 * 
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+	 * @param start the starting node
+	 * @param end the ending node
+	 * @return the distance between the nodes
 	 */
-	public int compare(Node o1, Node o2) {
-		// Use f() function and delegation.
-		return Double.compare(f(o1), f(o2));
+	private double distanceBetween(Node start, Node end) {
+		// Nodes are diagonal.
+		if (start.x != end.x && start.y != end.y) {
+			return DIAGONAL_COST;
+		}
+		// Nodes are not diagonal.
+		return 1;
 	}
 
 	/**
@@ -195,7 +193,7 @@ public class AStarAlgorithm implements Comparator<Node> {
 	 *            computed
 	 * @return the distance between the starting node and the node n
 	 */
-	private int g(Node n) {
+	private double g(Node n) {
 		return n.getG();
 	}
 
