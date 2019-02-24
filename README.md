@@ -460,7 +460,7 @@ My solution is not the best for sure and can be further improved. In particular,
 
 ## Acknowledgements
 
-Special thanks to @enricoaleandri for building the visualizer used to show the paths.
+Special thanks to @enricoaleandri for building the [Processing](https://processing.org/) visualizer used to show the paths.
 
 ## Discussions
 
