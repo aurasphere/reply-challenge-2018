@@ -1,3 +1,5 @@
+[![Donate](https://img.shields.io/badge/Donate-PayPal-orange.svg)](https://www.paypal.com/donate/?cmd=_donations&business=8UK2BZP2K8NSS)
+
 # Reply Code Challenge 2018 Training
 
 This repository contains both the problem statement and my solution to the Reply Code Challenge training problem. The solution is written in Java.
