@@ -460,6 +460,8 @@ This project was really fun and interesting. I've surely learned a lot on pathfi
 
 My solution is not the best for sure and can be further improved. In particular, a more efficient approach would probably be the [Jump Point algorithm](https://users.cecs.anu.edu.au/~dharabor/data/papers/harabor-grastien-aaai11.pdf), which I may study in the future if I get any spare time.
 
+I've also worked on a practical application of this [in a maze solving app that can be found here](https://github.com/aurasphere/maze-solver).
+
 ## Acknowledgements
 
 Special thanks to @enricoaleandri for building the [Processing](https://processing.org/) visualizer used to show the paths (which I'm temporarily hosting under the directory visualizer).
